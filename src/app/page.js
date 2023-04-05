@@ -1,7 +1,16 @@
 'use client';
 
 import { Inter } from 'next/font/google';
-import { Box, Button, InputLabel, MenuItem, Select, Typography } from '@mui/material';
+import {
+	Box,
+	Button,
+	Checkbox,
+	FormControlLabel,
+	InputLabel,
+	MenuItem,
+	Select,
+	Typography,
+} from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import dynamic from 'next/dynamic';
 import { FormInputField } from '@/components/FormInputField';
@@ -15,6 +24,7 @@ const Map = dynamic(() => import('../components/Map'), { ssr: false });
 export default function Home() {
 	const [operator, setOperator] = useState('SEMUA');
 	const [data, setData] = useState();
+	const [autoChecked, setAutoChecked] = useState(false);
 
 	const getData = async () => {
 		const prepareData = {
@@ -59,19 +69,14 @@ export default function Home() {
 			const mappedData = removeNo.map((val) => {
 				return {
 					orig: val,
-					merk: val.indexOf(
-						val.match(
-							/(HINO|TOYOTA|ISUZU|MERCEDES|DAIHATSU|SUZUKI|SB0|ZHONGTONG|VOLVO)/
-						)
-					),
-					name: val.substring(
-						0,
-						val.indexOf(
-							val.match(
-								/(HINO|TOYOTA|ISUZU|MERCEDES|DAIHATSU|SUZUKI|SB0|ZHONGTONG|VOLVO)/
-							)
-						)
-					),
+					name:
+						val.match(/[0-9]+/) !== null
+							? val.substring(
+									0,
+									val.indexOf(val.match(/[0-9]+/)) +
+										val.match(/[0-9]+/)[0].length
+							  )
+							: null,
 					coor: val
 						.substring(val.indexOf('.') - 2, val.length)
 						.substring(0, 19)
@@ -88,13 +93,23 @@ export default function Home() {
 		});
 	};
 
+	useEffect(() => {
+		if (autoChecked) {
+			const interval = setInterval(() => {
+				getData();
+			}, 3000);
+
+			return () => clearInterval(interval);
+		}
+	}, [autoChecked]);
+
 	return (
 		<Box display='flex' flexDirection='column' height='100vh' width='100vw'>
 			<Grid
 				container
 				columnSpacing={4}
 				rowSpacing={2}
-				sx={{ p: '12px', mt: '12px', mx: '0px', alignItems: 'end' }}
+				sx={{ p: '12px', mt: '12px', mx: '0px', alignItems: 'flex-end' }}
 			>
 				<Grid item xs={3}>
 					<InputLabel shrink htmlFor='op'>
@@ -103,17 +118,25 @@ export default function Home() {
 					<Select
 						value={operator}
 						onChange={(e) => setOperator(e.target.value)}
-						input={<FormInputField fullWidth />}
+						input={<FormInputField fullWidth size='small' />}
 					>
 						<MenuItem value='SEMUA'>Semua Operator</MenuItem>
 						<MenuItem value='MAYASARI'>PT Mayasari Bhakti</MenuItem>
 						<MenuItem value='STEADYSAFE'>PT Steady Safe</MenuItem>
 					</Select>
 				</Grid>
-				<Grid xs={3}>
+				<Grid xs={1}>
 					<Button variant='contained' onClick={() => getData()}>
 						Tampilkan
 					</Button>
+				</Grid>
+				<Grid xs={2}>
+					<FormControlLabel
+						control={
+							<Checkbox onChange={(e) => setAutoChecked(e.target.checked)} />
+						}
+						label='Update Otomatis'
+					/>
 				</Grid>
 			</Grid>
 			<Box display='flex' flex={1}>

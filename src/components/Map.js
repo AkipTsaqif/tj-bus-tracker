@@ -8,8 +8,8 @@ import 'leaflet/dist/leaflet.css';
 const newIcon = new L.Icon({
 	iconUrl: '/marker-100.png',
 	iconRetinaUrl: '/marker-100.png',
-	iconSize: [64, 64],
-	// iconAnchor: [60, 60],
+	iconSize: [48, 48],
+	iconAnchor: [24, 45],
 });
 
 const Map = ({ data }) => {
@@ -45,7 +45,7 @@ const Map = ({ data }) => {
 						position={[parseFloat(val.coor[0]), parseFloat(val.coor[1])]}
 						icon={newIcon}
 					>
-						<Popup>{val.orig}</Popup>
+						<Popup>{val.name}</Popup>
 					</Marker>
 				))}
 			</MapContainer>
