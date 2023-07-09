@@ -355,7 +355,7 @@ export default function Home() {
                         fontWeight: "bold",
                     }}
                 >
-                    v1.0
+                    v1.1
                 </Typography>
                 <Map data={data} position={searchedBus?.coor} />
             </Box>
