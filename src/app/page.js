@@ -2,9 +2,11 @@
 
 import { Inter } from "next/font/google";
 import {
+    Backdrop,
     Box,
     Button,
     Checkbox,
+    CircularProgress,
     FormControlLabel,
     InputLabel,
     MenuItem,
@@ -59,6 +61,7 @@ const busOperators = [
 export default function Home() {
     const [operator, setOperator] = useState("SWAKELOLA");
     const [data, setData] = useState();
+    const [loading, setLoading] = useState(false);
     // const [currentDate, setCurrentDate] = useState(new Date());
     const [autoChecked, setAutoChecked] = useState(false);
     const [btnClicked, setBtnClicked] = useState(false);
@@ -69,6 +72,7 @@ export default function Home() {
 
     const getData = async () => {
         setBtnClicked(true);
+        setLoading(true);
 
         const prepareData = {
             kode: operator,
@@ -164,6 +168,7 @@ export default function Home() {
                 console.log("fixedData: ", fixedData);
 
                 setData(fixedData);
+                setLoading(false);
             });
     };
 
@@ -259,6 +264,16 @@ export default function Home() {
                     },
                 }}
             >
+                <Backdrop
+                    open={loading}
+                    sx={{
+                        zIndex: 1001,
+                        position: "absolute",
+                        top: 20,
+                    }}
+                >
+                    <CircularProgress sx={{ color: "#ffffff" }} />
+                </Backdrop>
                 <Tooltip
                     placement="bottom"
                     title={
@@ -273,7 +288,7 @@ export default function Home() {
                         // variant="outlined"
                         size="small"
                         InputLabelProps={{ shrink: false }}
-                        disabled={!btnClicked}
+                        disabled={!btnClicked || loading}
                         onBlur={(e) => setSearchText(e.target.value)}
                         InputProps={{
                             endAdornment: (
