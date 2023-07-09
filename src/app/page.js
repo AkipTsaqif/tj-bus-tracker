@@ -59,10 +59,13 @@ const busOperators = [
 export default function Home() {
     const [operator, setOperator] = useState("SWAKELOLA");
     const [data, setData] = useState();
+    // const [currentDate, setCurrentDate] = useState(new Date());
     const [autoChecked, setAutoChecked] = useState(false);
     const [btnClicked, setBtnClicked] = useState(false);
     const [searchText, setSearchText] = useState("");
     const [searchedBus, setSearchedBus] = useState({});
+
+    const [numVisit, setNumVisit] = useState();
 
     const getData = async () => {
         setBtnClicked(true);
@@ -184,6 +187,14 @@ export default function Home() {
         }
     }, [autoChecked]);
 
+    // useEffect(() => {
+    //     const interval = setInterval(() => {
+    //         setCurrentDate(new Date());
+    //     }, 1000);
+
+    //     return () => clearInterval(interval);
+    // }, []);
+
     return (
         <Box display="flex" flexDirection="column" height="100vh" width="100vw">
             <Grid
@@ -195,9 +206,10 @@ export default function Home() {
                     mt: "0px",
                     mx: "0px",
                     alignItems: "flex-end",
+                    zIndex: 1002,
                 }}
             >
-                <Grid item xs={3}>
+                <Grid item xs={12} sm={6} lg={3}>
                     <InputLabel shrink htmlFor="op">
                         <Typography fontWeight="bold">
                             Pilih Operator:
@@ -215,7 +227,7 @@ export default function Home() {
                         ))}
                     </Select>
                 </Grid>
-                <Grid xs={3}>
+                <Grid xs={12} sm={6} lg={3}>
                     <Button
                         variant="contained"
                         sx={{ mr: "16px" }}
@@ -231,7 +243,7 @@ export default function Home() {
                                 }
                             />
                         }
-                        label="Update Otomatis"
+                        label="Update Otomatis (5s)"
                     />
                 </Grid>
             </Grid>
@@ -281,12 +293,55 @@ export default function Home() {
                             position: "absolute",
                             top: 40, // adjust as needed
                             right: 20, // adjust as needed
-                            zIndex: 9999999,
+                            zIndex: 1000,
                             backgroundColor: "#fff",
                             boxShadow: 1,
                         }}
                     />
                 </Tooltip>
+                {/* <Typography
+                    sx={{
+                        position: "absolute",
+                        top: 10,
+                        right: 50,
+                        fontSize: "8px",
+                        fontWeight: "bold",
+                        textAlign: "right",
+                    }}
+                >
+                    {currentDate.toLocaleString("id-ID", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: false,
+                    })}{" "}
+                    ※{" "}
+                </Typography>
+                <Typography
+                    sx={{
+                        position: "absolute",
+                        top: 10,
+                        right: 10,
+                        fontSize: "8px",
+                        fontWeight: "bold",
+                    }}
+                >
+                    9
+                </Typography> */}
+                <Typography
+                    sx={{
+                        position: "absolute",
+                        top: 10,
+                        left: 10,
+                        fontSize: "8px",
+                        fontWeight: "bold",
+                    }}
+                >
+                    v1.0
+                </Typography>
                 <Map data={data} position={searchedBus?.coor} />
             </Box>
         </Box>
