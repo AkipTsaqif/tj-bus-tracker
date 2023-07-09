@@ -62,13 +62,13 @@ export default function Home() {
     const [operator, setOperator] = useState("SWAKELOLA");
     const [data, setData] = useState();
     const [loading, setLoading] = useState(false);
+    const [loadingTooLong, setLoadingTooLong] = useState(false);
+    const [errMsg, setErrMsg] = useState("");
     // const [currentDate, setCurrentDate] = useState(new Date());
     const [autoChecked, setAutoChecked] = useState(false);
     const [btnClicked, setBtnClicked] = useState(false);
     const [searchText, setSearchText] = useState("");
     const [searchedBus, setSearchedBus] = useState({});
-
-    const [numVisit, setNumVisit] = useState();
 
     const getData = async () => {
         setBtnClicked(true);
@@ -82,9 +82,18 @@ export default function Home() {
             submit: "CARI",
         };
 
+        const cancelToken = axios.CancelToken.source();
+
+        const timeout = setTimeout(() => {
+            cancelToken.cancel("Request timeout");
+        }, 30000);
+
         // dev: localhost:3001
+        // prod: tj-bus-tracker.cyclic.app
         await axios
-            .post("https://tj-bus-tracker.cyclic.app/", prepareData)
+            .post("https://tj-bus-tracker.cyclic.app", prepareData, {
+                cancelToken: cancelToken.token,
+            })
             .then((res) => {
                 const dom = new DOMParser().parseFromString(
                     res.data,
@@ -169,7 +178,24 @@ export default function Home() {
 
                 setData(fixedData);
                 setLoading(false);
-            });
+            })
+            .catch((err) => {
+                if (err) {
+                    setErrMsg(
+                        "Terdapat kesalahan dalam mengambil posisi bus, silahkan coba kembali."
+                    );
+                    setLoading(false);
+                    setLoadingTooLong(false);
+                    setBtnClicked(false);
+                }
+                if (axios.isCancel(err)) {
+                    console.log("cancelled");
+                    setLoading(false);
+                    setLoadingTooLong(false);
+                    setBtnClicked(false);
+                }
+            })
+            .finally(() => clearTimeout(timeout));
     };
 
     const searchBus = (name) => {
@@ -183,6 +209,14 @@ export default function Home() {
     };
 
     useEffect(() => {
+        const cancelTokenSource = axios.CancelToken.source();
+
+        return () => {
+            cancelTokenSource.cancel("Component unmounted");
+        };
+    }, []);
+
+    useEffect(() => {
         if (btnClicked && autoChecked) {
             const interval = setInterval(() => {
                 getData();
@@ -191,6 +225,18 @@ export default function Home() {
             return () => clearInterval(interval);
         }
     }, [autoChecked]);
+
+    useEffect(() => {
+        if (loading) {
+            const timeoutId = setTimeout(() => {
+                setLoadingTooLong(true);
+            }, 10000);
+
+            return () => {
+                clearTimeout(timeoutId);
+            };
+        }
+    }, [loading]);
 
     // useEffect(() => {
     //     const interval = setInterval(() => {
@@ -272,7 +318,24 @@ export default function Home() {
                         top: 20,
                     }}
                 >
-                    <CircularProgress sx={{ color: "#ffffff" }} />
+                    <Box
+                        display="flex"
+                        flexDirection="column"
+                        alignItems="center"
+                    >
+                        <CircularProgress sx={{ color: "#ffffff" }} />
+                        {loadingTooLong && (
+                            <Typography
+                                sx={{
+                                    color: "white",
+                                    mt: "16px",
+                                    fontWeight: "bold",
+                                }}
+                            >
+                                Mohon tunggu sesaat lagi...
+                            </Typography>
+                        )}
+                    </Box>
                 </Backdrop>
                 <Tooltip
                     placement="bottom"
@@ -356,6 +419,18 @@ export default function Home() {
                     }}
                 >
                     v1.1
+                </Typography>
+                <Typography
+                    sx={{
+                        position: "absolute",
+                        top: 0,
+                        right: 10,
+                        fontSize: "12px",
+                        color: "red",
+                        fontWeight: "bold",
+                    }}
+                >
+                    {errMsg}
                 </Typography>
                 <Map data={data} position={searchedBus?.coor} />
             </Box>
