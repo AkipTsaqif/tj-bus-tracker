@@ -91,9 +91,13 @@ export default function Home() {
         // dev: localhost:3001
         // prod: tj-bus-tracker.cyclic.app
         await axios
-            .post("https://tj-bus-tracker.cyclic.app", prepareData, {
-                cancelToken: cancelToken.token,
-            })
+            .post(
+                "https://tj-bus-tracker.cyclic.app/transjakarta/operators",
+                prepareData,
+                {
+                    cancelToken: cancelToken.token,
+                }
+            )
             .then((res) => {
                 const dom = new DOMParser().parseFromString(
                     res.data,
@@ -260,7 +264,7 @@ export default function Home() {
                     zIndex: 1002,
                 }}
             >
-                <Grid item xs={12} sm={6} lg={3}>
+                <Grid item xs={12} sm={6} lg={4}>
                     <InputLabel shrink htmlFor="op">
                         <Typography fontWeight="bold">
                             Pilih Operator:
@@ -278,7 +282,7 @@ export default function Home() {
                         ))}
                     </Select>
                 </Grid>
-                <Grid xs={12} sm={6} lg={3}>
+                <Grid xs={12} sm={6} lg={4}>
                     <Button
                         variant="contained"
                         sx={{ mr: "16px" }}
@@ -418,7 +422,7 @@ export default function Home() {
                         fontWeight: "bold",
                     }}
                 >
-                    v1.1
+                    v1.1.1
                 </Typography>
                 <Typography
                     sx={{
