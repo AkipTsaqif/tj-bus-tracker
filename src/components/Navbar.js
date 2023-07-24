@@ -1,27 +1,22 @@
 "use client";
 
-import { useState } from "react";
 import {
-    AppBar,
-    Button,
-    CssBaseline,
-    Menu,
-    MenuItem,
-    Toolbar,
-    Typography,
-} from "@mui/material";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 import Link from "next/link";
+import { Button } from "./ui/button";
+import { ArrowDownUp } from "lucide-react";
 
 const Navbar = () => {
-    const [anchor, setAnchor] = useState(null);
-    const menuOpen = Boolean(anchor);
-
     return (
-        <AppBar position="sticky" sx={{ backgroundColor: "#0C1B2A" }}>
-            <CssBaseline />
-            <Toolbar className="min-h-[48px] border-b-[1px] border-white">
+        <div className="sticky top-0 left-0">
+            <div className="relative px-6 flex items-center min-h-[48px] border-b-[1px] border-white">
                 <div className="flex justify-between gap-4 w-full items-center">
                     <Link
                         href="/"
@@ -36,9 +31,41 @@ const Navbar = () => {
                         >
                             Transjakarta
                         </Link>
-                        <Button
+                        <DropdownMenu>
+                            <DropdownMenuTrigger className="bg-waybase" asChild>
+                                <Button className="text-white font-wayfinding font-bold focus-visible:ring-0 focus-visible:ring-offset-0">
+                                    KCI
+                                    <ArrowDownUp className="ml-2 h-4 w-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="bg-waybase mr-2 drop-shadow-xl border-neutral-300 border-[2px] z-[1002]">
+                                <DropdownMenuLabel className="text-white font-wayfinding font-bold">
+                                    Wilayah Operasi
+                                </DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuGroup>
+                                    <DropdownMenuItem className="focus:bg-waybus">
+                                        <Link
+                                            href="/kci/1"
+                                            className="text-white font-wayfinding w-full h-full"
+                                        >
+                                            Daop I
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem className="focus:bg-waybus">
+                                        <Link
+                                            href="/kci/1"
+                                            className="text-white font-wayfinding"
+                                        >
+                                            Daop VI
+                                        </Link>
+                                    </DropdownMenuItem>
+                                </DropdownMenuGroup>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                        {/* <Button
                             className="text-white font-wayfinding font-bold"
-                            onClick={(e) => setAnchor(e.currentTarget)}
+                            onClick={(e) => setIsMenuOpen(true)}
                             endIcon={
                                 <KeyboardArrowDownIcon
                                     color="white"
@@ -49,9 +76,7 @@ const Navbar = () => {
                             KCI
                         </Button>
                         <Menu
-                            anchorEl={anchor}
-                            open={menuOpen}
-                            onClose={() => setAnchor(null)}
+                            onClose={() => setIsMenuOpen(null)}
                             sx={{
                                 "& .MuiPaper-root": {
                                     backgroundColor: "#00629F",
@@ -74,11 +99,11 @@ const Navbar = () => {
                                     Daop VI
                                 </Link>
                             </MenuItem>
-                        </Menu>
+                        </Menu> */}
                     </div>
                 </div>
-            </Toolbar>
-        </AppBar>
+            </div>
+        </div>
     );
 };
 

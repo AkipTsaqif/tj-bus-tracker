@@ -274,32 +274,29 @@ const Transjakarta = () => {
                 }}
             >
                 <Grid item xs={12} sm={6} lg={4}>
-                    <InputLabel shrink htmlFor="op">
-                        <Typography
-                            fontWeight="bold"
-                            className="font-wayfinding text-white"
-                        >
+                    <div className="flex flex-col space-y-1">
+                        <span className="text-white tracking-wide font-wayfinding font-bold text-xs">
                             Pilih Operator:
-                        </Typography>
-                    </InputLabel>
-                    <Select
-                        defaultValue={operator}
-                        onValueChange={(e) => setOperator(e)}
-                    >
-                        <SelectTrigger className="z-[10] tracking-wider font-wayfinding font-semibold border-white text-white">
-                            <SelectValue placeholder="Pilih operator bus..." />
-                        </SelectTrigger>
-                        <SelectContent className="z-[1001] tracking-wide bg-neutral-200 border-[1px] border-black drop-shadow-lg font-wayfinding font-semibold">
-                            {busOperators.map((operator) => (
-                                <SelectItem
-                                    key={operator.id}
-                                    value={operator.id}
-                                >
-                                    {operator.code} - {operator.name}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                        </span>
+                        <Select
+                            defaultValue={operator}
+                            onValueChange={(e) => setOperator(e)}
+                        >
+                            <SelectTrigger className="z-[10] tracking-wider font-wayfinding font-semibold border-white text-white">
+                                <SelectValue placeholder="Pilih operator bus..." />
+                            </SelectTrigger>
+                            <SelectContent className="z-[1001] tracking-wide bg-neutral-200 border-[1px] border-black drop-shadow-lg font-wayfinding font-semibold">
+                                {busOperators.map((operator) => (
+                                    <SelectItem
+                                        key={operator.id}
+                                        value={operator.id}
+                                    >
+                                        {operator.code} - {operator.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </Grid>
                 <Grid xs={12} sm={6} lg={4}>
                     <div className="flex items-center space-x-4">
@@ -449,7 +446,7 @@ const Transjakarta = () => {
                     }}
                     className="text-white font-wayfinding tracking-wide"
                 >
-                    v1.2.1
+                    v1.2.2
                 </Typography>
                 <Typography
                     sx={{
