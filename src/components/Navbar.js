@@ -19,7 +19,7 @@ const Navbar = () => {
     const menuOpen = Boolean(anchor);
 
     return (
-        <AppBar position="sticky" className="bg-waybase">
+        <AppBar position="sticky" sx={{ backgroundColor: "#0C1B2A" }}>
             <CssBaseline />
             <Toolbar className="min-h-[48px] border-b-[1px] border-white">
                 <div className="flex justify-between gap-4 w-full items-center">
