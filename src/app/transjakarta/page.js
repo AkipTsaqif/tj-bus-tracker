@@ -256,13 +256,17 @@ const Transjakarta = () => {
     // }, []);
 
     return (
-        <Box display="flex" flexDirection="column" height="100vh" width="100vw">
+        <Box
+            display="flex"
+            flexDirection="column"
+            width="100vw"
+            className="h-[calc(100vh-48px)]"
+        >
             <Grid
                 container
                 columnSpacing={3}
-                rowSpacing={2}
+                className="px-[12px] pt-2"
                 sx={{
-                    p: "12px 12px 0px 12px",
                     mt: "0px",
                     mx: "0px",
                     alignItems: "flex-end",
@@ -298,25 +302,29 @@ const Transjakarta = () => {
                     </Select>
                 </Grid>
                 <Grid xs={12} sm={6} lg={4}>
-                    <Button
-                        className="mr-4 uppercase tracking-wide bg-wayout font-wayfinding text-black font-bold border-white border-[1px]"
-                        onClick={() => getData()}
-                    >
-                        Tampilkan
-                    </Button>
-                    <div className="flex items-center space-x-2 mt-2">
-                        <Checkbox
-                            id="autoUpdate"
-                            className="border-white"
-                            checked={autoChecked}
-                            onCheckedChange={() => setAutoChecked(!autoChecked)}
-                        />
-                        <label
-                            htmlFor="autoUpdate"
-                            className="text-sm text-white tracking-wide font-wayfinding font-bold leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    <div className="flex items-center space-x-4">
+                        <Button
+                            className="uppercase tracking-wide bg-wayout hover:bg-wayout font-wayfinding text-black font-bold border-white border-[1px]"
+                            onClick={() => getData()}
                         >
-                            Auto update
-                        </label>
+                            Tampilkan
+                        </Button>
+                        <div className="flex items-center space-x-2 mt-2">
+                            <Checkbox
+                                id="autoUpdate"
+                                className="border-white"
+                                checked={autoChecked}
+                                onCheckedChange={() =>
+                                    setAutoChecked(!autoChecked)
+                                }
+                            />
+                            <label
+                                htmlFor="autoUpdate"
+                                className="text-sm text-white tracking-wide font-wayfinding font-bold leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                                Auto update
+                            </label>
+                        </div>
                     </div>
                 </Grid>
             </Grid>
@@ -441,7 +449,7 @@ const Transjakarta = () => {
                     }}
                     className="text-white font-wayfinding tracking-wide"
                 >
-                    v1.1.2
+                    v1.2.0
                 </Typography>
                 <Typography
                     sx={{

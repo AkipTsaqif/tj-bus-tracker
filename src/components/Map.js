@@ -76,7 +76,7 @@ const Map = ({ data, position }) => {
         // <Box display='flex' flexDirection='column' justifyContent='center'>
         <Box
             sx={{
-                // height: '100%',
+                // height: "100vh",
                 width: "100%",
                 mt: "24px",
                 border: "1px solid gray",
