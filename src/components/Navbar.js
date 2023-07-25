@@ -38,7 +38,7 @@ const Navbar = () => {
                                     <ArrowDownUp className="ml-2 h-4 w-4" />
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent className="bg-waybase mr-2 drop-shadow-xl border-neutral-300 border-[2px] z-[1002]">
+                            <DropdownMenuContent className="bg-waybase absolute right-0 drop-shadow-xl border-neutral-300 border-[2px] z-[1002]">
                                 <DropdownMenuLabel className="text-white font-wayfinding font-bold">
                                     Wilayah Operasi
                                 </DropdownMenuLabel>
@@ -54,7 +54,7 @@ const Navbar = () => {
                                     </DropdownMenuItem>
                                     <DropdownMenuItem className="focus:bg-waybus">
                                         <Link
-                                            href="/kci/1"
+                                            href="/kci/6"
                                             className="text-white font-wayfinding"
                                         >
                                             Daop VI
