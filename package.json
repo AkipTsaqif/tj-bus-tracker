@@ -24,6 +24,7 @@
     "clsx": "^2.0.0",
     "eslint": "8.37.0",
     "eslint-config-next": "13.2.4",
+    "fuse.js": "^6.6.2",
     "leaflet": "^1.9.3",
     "leaflet-providers": "^1.13.0",
     "leaflet-routing-machine": "^3.2.12",

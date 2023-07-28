@@ -7,9 +7,11 @@ import Clock from "react-live-clock";
 import Datatable from "@/components/Datatable";
 import { Button } from "@/components/ui/button";
 import _ from "lodash";
+import Fuse from "fuse.js";
 
 const Daop = ({ params }) => {
     const [trainData, setTrainData] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const columns = [
         {
@@ -98,7 +100,7 @@ const Daop = ({ params }) => {
             "CKI - Cikini",
             "MRI - Manggarai",
             "TEB - Tebet",
-            "CAW - Cawang",
+            "CW - Cawang",
             "DRN - Duren Kalibata",
             "PSMB - Pasar Minggu Baru",
             "PSM - Pasar Minggu",
@@ -113,6 +115,31 @@ const Daop = ({ params }) => {
             "BJD - Bojonggede",
             "CLT - Cilebut",
             "BOO - Bogor",
+        ],
+        namboLine: [
+            "JAKK - Jakarta Kota",
+            "JAY - Jayakarta",
+            "MGB - Mangga Besar",
+            "SW - Sawah Besar",
+            "JUA - Juanda",
+            "GDD - Gondangdia",
+            "CKI - Cikini",
+            "MRI - Manggarai",
+            "TEB - Tebet",
+            "CW - Cawang",
+            "DRN - Duren Kalibata",
+            "PSMB - Pasar Minggu Baru",
+            "PSM - Pasar Minggu",
+            "TNT - Tanjung Barat",
+            "LNA - Lenteng Agung",
+            "UP - Universitas Pancasila",
+            "UI - Universitas Indonesia",
+            "POC - Pondok Cina",
+            "DPB - Depok Baru",
+            "DP - Depok",
+            "CTA - Citayam",
+            "CBN - Cibinong",
+            "NMO - Nambo",
         ],
         blueLine: [
             "POK - Pondok Jati",
@@ -192,7 +219,7 @@ const Daop = ({ params }) => {
 
         if (type === "TM") regex = /^(\d+)TM(\d+)$/;
         if (type === "JR") regex = /^(\d+)JR(\d+)(\+\d+)?$/;
-        if (type === "TKK") regex = /^(\d+)TKK(\d+)$/;
+        if (type === "T") regex = /^(\d+)T(\d+)$/;
 
         const matches = train.match(regex);
 
@@ -208,17 +235,25 @@ const Daop = ({ params }) => {
             return `JR${xNumber}-${yNumber}${
                 zNumber !== undefined ? zNumber : ""
             }`;
-        if (type === "TKK")
-            return `Tokyu ${xNumber.substring(0, 1)}1${yNumber}`;
+        if (type === "T") return `Tokyu ${xNumber.substring(0, 1)}1${yNumber}`;
     };
 
     const currentStation = (prevStation, trainNo) => {
-        const no = trainNo.substring(0, 2);
-        const upTrain = trainNo % 2 === 1; // up nomor ganjil
+        let strippedTrainNo;
+
+        const stripKlb = trainNo.match(/\/(\d+)/);
+        if (stripKlb) {
+            strippedTrainNo = stripKlb[1];
+        } else {
+            strippedTrainNo = trainNo.replace(/\D/g, "");
+        }
+
+        const no = strippedTrainNo.substring(0, 2);
+        const upTrain = strippedTrainNo % 2 === 1; // up nomor ganjil
         let currStation;
         let prevStationIndex;
 
-        if (no === "11" || no === "12" || no === "13") {
+        if (no === "11" || no === "12" || no === "13" || no === "14") {
             const trainLine = stationList.redLine;
             prevStationIndex = _.findIndex(trainLine, (e) =>
                 _.includes(e, prevStation)
@@ -238,7 +273,27 @@ const Daop = ({ params }) => {
                             ? prevStationIndex + 1
                             : prevStationIndex
                     ];
-        } else if (no === "16" || no === "17") {
+        } else if (no === "15") {
+            const trainLine = stationList.namboLine;
+            prevStationIndex = _.findIndex(trainLine, (e) =>
+                _.includes(e, prevStation)
+            );
+
+            if (upTrain)
+                currStation =
+                    trainLine[
+                        prevStationIndex > 0
+                            ? prevStationIndex - 1
+                            : prevStationIndex
+                    ];
+            else
+                currStation =
+                    trainLine[
+                        prevStationIndex < trainLine.length - 1
+                            ? prevStationIndex + 1
+                            : prevStationIndex
+                    ];
+        } else if (no === "16" || no === "17" || no === "18") {
             const trainLine = stationList.greenLine;
             prevStationIndex = _.findIndex(trainLine, (e) =>
                 _.includes(e, prevStation)
@@ -258,7 +313,7 @@ const Daop = ({ params }) => {
                             ? prevStationIndex + 1
                             : prevStationIndex
                     ];
-        } else if (no === "19") {
+        } else if (no === "19" || no === "20") {
             const trainLine = stationList.brownLine;
             prevStationIndex = _.findIndex(trainLine, (e) =>
                 _.includes(e, prevStation)
@@ -362,25 +417,114 @@ const Daop = ({ params }) => {
         return currStation;
     };
 
+    const findCurrDeptTime = (trainDetail, trainNo, currStation) => {
+        if (currStation === undefined) {
+            return "11:11:00";
+        }
+
+        let stationSubstring = currStation.slice(currStation.indexOf("-") + 2);
+
+        const dottedStationNames = [
+            "UP - Universitas Pancasila",
+            "UI - Universitas Indonesia",
+            "PSMB - Pasar Minggu Baru",
+            "TLM - Telagamurni",
+        ];
+
+        const fixDottedNames = [
+            "Univ.Pancasila",
+            "Univ.Indonesia",
+            "Pas.Minggubaru",
+            "M.Telagamurni",
+        ];
+
+        const isDotted = _.includes(dottedStationNames, currStation);
+
+        if (isDotted) {
+            const dottedStationIndex = dottedStationNames.indexOf(currStation);
+            stationSubstring = fixDottedNames[dottedStationIndex];
+        }
+
+        const stations = trainDetail.flatMap((entry) =>
+            entry.data.map((stationData) => ({
+                train_no: stationData.train_no,
+                station: stationData.station,
+            }))
+        );
+
+        const fuseOptions = {
+            includeScore: true,
+            threshold: 0.3,
+            keys: ["station"],
+        };
+
+        const fuse = new Fuse(stations, fuseOptions);
+        const searchResult = fuse.search(stationSubstring);
+        if (trainNo === 1251) console.log(searchResult);
+        if (trainNo === "1255") console.log(searchResult);
+
+        let time = "11:11:11";
+        searchResult.forEach((searchResult) => {
+            const matchingStation = searchResult.item;
+            const { train_no: foundTrainNo } = matchingStation;
+
+            if (foundTrainNo === trainNo) {
+                const foundTimeEntry = trainDetail.find(
+                    (entry) => entry.data[0].train_no === foundTrainNo
+                );
+
+                if (trainNo === "1251") console.log(foundTimeEntry);
+
+                const foundTime = foundTimeEntry.data.find(
+                    (stationData) =>
+                        stationData.train_no === trainNo &&
+                        stationData.station === matchingStation.station
+                );
+                if (trainNo === 1251) console.log(foundTime);
+                if (trainNo === "1251") console.log(matchingStation);
+                if (trainNo === "1251") console.log(stations);
+                if (trainNo === "1251") console.log(currStation);
+
+                if (foundTime) {
+                    time = foundTime.time;
+                }
+            }
+        });
+
+        return time;
+    };
+
     const fetchData = async () => {
+        setIsLoading(true);
+        setTrainData([]);
         await axios
             .get(`${process.env.NEXT_PUBLIC_API_URL}kci/krl-d${params.daop}`)
             .then((res) => {
-                const modifiedData = res.data.map((train) => {
+                console.log(res.data);
+                const modifiedData = res.data.location.map((train) => {
                     return {
                         ...train,
                         trainset: trainType(train.trainset),
                         station: currentStation(train.station_code, train.noka),
+                        jadwal: findCurrDeptTime(
+                            res.data.detail,
+                            train.noka,
+                            currentStation(train.station_code, train.noka)
+                        ),
                     };
                 });
 
                 setTrainData(modifiedData);
-            });
+            })
+            .then(() => setIsLoading(false));
     };
 
     return (
         <div>
-            <div className="flex justify-between items-center mx-8 my-4">
+            <div className="absolute left-6 top-12 text-white text-[10px] font-wayfinding">
+                v1.2.5
+            </div>
+            <div className="flex justify-between items-center mx-6 my-4">
                 <h1 className="text-white text-[20px] font-wayfinding font-bold">
                     KCI Daop I
                 </h1>
@@ -393,12 +537,17 @@ const Daop = ({ params }) => {
                 <Button
                     className="uppercase tracking-wide bg-wayout hover:bg-wayout font-wayfinding text-black font-bold border-white border-[1px]"
                     onClick={() => fetchData()}
+                    disabled={isLoading}
                 >
                     Refresh Data
                 </Button>
             </div>
-            <div className="container m-auto">
-                <Datatable columns={columns} data={trainData} />
+            <div className="mx-6">
+                <Datatable
+                    columns={columns}
+                    data={trainData}
+                    loading={isLoading}
+                />
             </div>
         </div>
     );
