@@ -446,7 +446,7 @@ const Transjakarta = () => {
                     }}
                     className="text-white font-wayfinding tracking-wide"
                 >
-                    v1.2.5
+                    v1.2.6
                 </Typography>
                 <Typography
                     sx={{

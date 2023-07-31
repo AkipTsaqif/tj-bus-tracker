@@ -213,7 +213,9 @@ const Daop = ({ params }) => {
     };
 
     const trainType = (train) => {
-        const matchResult = train.match(/[a-zA-Z+]+/);
+        let matchResult;
+        if (train) matchResult = train.match(/[a-zA-Z+]+/);
+
         const type = matchResult ? matchResult[0] : "";
         let regex;
 
@@ -221,10 +223,11 @@ const Daop = ({ params }) => {
         if (type === "JR") regex = /^(\d+)JR(\d+)(\+\d+)?$/;
         if (type === "T") regex = /^(\d+)T(\d+)$/;
 
-        const matches = train.match(regex);
+        let matches;
+        if (train) matches = train.match(regex);
 
         if (!matches) {
-            return "Invalid input format";
+            return "Tidak diketahui";
         }
 
         const [_, xNumber, yNumber, zNumber] = matches;
@@ -445,12 +448,14 @@ const Daop = ({ params }) => {
             stationSubstring = fixDottedNames[dottedStationIndex];
         }
 
-        const stations = trainDetail.flatMap((entry) =>
-            entry.data.map((stationData) => ({
-                train_no: stationData.train_no,
-                station: stationData.station,
-            }))
-        );
+        const stations = trainDetail.flatMap((entry) => {
+            if (Array.isArray(entry.data))
+                return entry.data.map((stationData) => ({
+                    train_no: stationData.train_no,
+                    station: stationData.station,
+                }));
+            else return [];
+        });
 
         const fuseOptions = {
             includeScore: true,
@@ -504,6 +509,7 @@ const Daop = ({ params }) => {
                 const modifiedData = res.data.location.map((train) => {
                     return {
                         ...train,
+                        sf: train.sf ? train.sf : "-",
                         trainset: trainType(train.trainset),
                         station: currentStation(train.station_code, train.noka),
                         jadwal: findCurrDeptTime(
@@ -522,7 +528,7 @@ const Daop = ({ params }) => {
     return (
         <div>
             <div className="absolute left-6 top-12 text-white text-[10px] font-wayfinding">
-                v1.2.5
+                v1.2.6
             </div>
             <div className="flex justify-between items-center mx-6 my-4">
                 <h1 className="text-white text-[20px] font-wayfinding font-bold">
