@@ -1,5 +1,9 @@
+"use client";
+
 import Navbar from "@/components/Navbar";
 import "./globals.css";
+import { Provider } from "react-redux";
+import store from "@/store";
 
 export const metadata = {
     title: "Tracking Posisi Transjakarta",
@@ -10,8 +14,10 @@ export default function RootLayout({ children }) {
     return (
         <html lang="en">
             <body className="bg-waybase">
-                <Navbar />
-                {children}
+                <Provider store={store}>
+                    <Navbar />
+                    {children}
+                </Provider>
             </body>
         </html>
     );

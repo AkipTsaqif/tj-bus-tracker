@@ -40,6 +40,7 @@ const Datatable = ({ data, columns, loading }) => {
 
     return (
         <div>
+            {console.log(data)}
             <div className="bg-waybase border-[2px] border-white">
                 <Table>
                     <TableHeader>
