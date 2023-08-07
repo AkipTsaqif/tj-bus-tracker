@@ -1,17 +1,25 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useGeolocated } from "react-geolocated";
+import axios from "axios";
+import { ArrowUpDown } from "lucide-react";
+
+import { getKRLData, selectKRLData } from "@/store/slices/krlSlice";
 import Datatable from "@/components/Datatable";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import axios from "axios";
-import { ArrowUpDown } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useGeolocated } from "react-geolocated";
+import _ from "lodash";
 
 export default function Home() {
     const [stations, setStations] = useState([]);
     const [closestStation, setClosestStation] = useState({});
     const [currentCity, setCurrentCity] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
+
+    const dispatch = useDispatch();
+    const krlList = useSelector(selectKRLData);
 
     const columns = [
         {
@@ -42,6 +50,10 @@ export default function Home() {
         {
             accessorKey: "sf",
             header: "SF",
+        },
+        {
+            accessorKey: "jadwal",
+            header: "Berangkat",
         },
     ];
 
@@ -124,12 +136,33 @@ export default function Home() {
                 );
                 getCurrentCity();
                 setClosestStation(closeStation);
+                setIsLoading(true);
             }
         }
     }, [stations, coords]);
 
+    useEffect(() => {
+        if (Object.keys(currentCity).length > 0) {
+            dispatch(
+                getKRLData(currentCity.city.includes("Jakarta") ? 1 : 6)
+            ).then(() => setIsLoading(false));
+        }
+    }, [currentCity, dispatch]);
+
+    const currStationTimetable = useMemo(() => {
+        if (Object.keys(closestStation).length > 0)
+            return _.filter(
+                krlList,
+                (trains) =>
+                    trains.station ===
+                    `${closestStation.code} - ${closestStation.name}`
+            );
+        else return [];
+    }, [krlList, closestStation]);
+
     return (
         <div className="flex flex-col px-6 py-2 h-[calc(100vh-48px)]">
+            {console.log(currentCity)}
             <div className="grid grid-cols-5 w-1/2">
                 <span className="text-white font-bold font-wayfinding tracking-wide">
                     Lokasimu
@@ -137,7 +170,11 @@ export default function Home() {
                 <div className="flex col-span-4 text-white font-bold font-wayfinding tracking-wide">
                     :{" "}
                     {Object.keys(currentCity).length ? (
-                        `${currentCity.neighbourhood}, ${currentCity.city_district}, ${currentCity.city}`
+                        `${
+                            currentCity.neighbourhood
+                                ? currentCity.neighbourhood
+                                : currentCity.village
+                        }, ${currentCity.city_district}, ${currentCity.city}`
                     ) : (
                         <Skeleton className="ml-1 h-[90%] w-full bg-slate-500/50" />
                     )}
@@ -155,9 +192,13 @@ export default function Home() {
                 </div>
             </div>
             <div className="grid grid-cols-2 gap-4 w-full mt-4">
-                <div className="text-white font-bold font-wayfinding">
-                    Kereta terdekat:
-                    <Datatable data={[]} columns={columns} />
+                <div className="flex flex-col gap-2 text-white font-bold font-wayfinding">
+                    Kereta berikutnya:
+                    <Datatable
+                        data={currStationTimetable}
+                        columns={columns}
+                        loading={isLoading}
+                    />
                 </div>
                 <div className="text-white font-bold font-wayfinding">
                     Bus terdekat:

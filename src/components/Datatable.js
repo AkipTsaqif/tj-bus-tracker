@@ -124,26 +124,28 @@ const Datatable = ({ data, columns, loading }) => {
                 <span className="text-white font-wayfinding font-bold tracking-wide">
                     Total kereta: {data.length}
                 </span>
-                <div className="space-x-2">
-                    <Button
-                        variant="outline"
-                        className="font-wayfinding uppercase bg-wayout font-bold"
-                        size="sm"
-                        onClick={() => table.previousPage()}
-                        disabled={!table.getCanPreviousPage()}
-                    >
-                        Kembali
-                    </Button>
-                    <Button
-                        variant="outline"
-                        className="font-wayfinding uppercase bg-wayout font-bold"
-                        size="sm"
-                        onClick={() => table.nextPage()}
-                        disabled={!table.getCanNextPage()}
-                    >
-                        Berikutnya
-                    </Button>
-                </div>
+                {data.length > 8 && (
+                    <div className="space-x-2">
+                        <Button
+                            variant="outline"
+                            className="font-wayfinding uppercase bg-wayout font-bold"
+                            size="sm"
+                            onClick={() => table.previousPage()}
+                            disabled={!table.getCanPreviousPage()}
+                        >
+                            Kembali
+                        </Button>
+                        <Button
+                            variant="outline"
+                            className="font-wayfinding uppercase bg-wayout font-bold"
+                            size="sm"
+                            onClick={() => table.nextPage()}
+                            disabled={!table.getCanNextPage()}
+                        >
+                            Berikutnya
+                        </Button>
+                    </div>
+                )}
             </div>
         </div>
     );

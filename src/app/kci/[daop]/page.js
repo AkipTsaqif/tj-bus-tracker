@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { ArrowUpDown } from "lucide-react";
 import Clock from "react-live-clock";
 import Datatable from "@/components/Datatable";
@@ -11,15 +10,10 @@ import { getKRLData, selectKRLData } from "@/store/slices/krlSlice";
 import _ from "lodash";
 
 const Daop = ({ params }) => {
-    const [trainData, setTrainData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
     const dispatch = useDispatch();
     const krlList = useSelector(selectKRLData);
-
-    // useEffect(() => {
-    //     dispatch(getKRLData);
-    // }, [dispatch])
 
     const columns = [
         {
@@ -98,7 +92,8 @@ const Daop = ({ params }) => {
     };
 
     const fetchData = () => {
-        dispatch(getKRLData(params.daop));
+        setIsLoading(true);
+        dispatch(getKRLData(params.daop)).then(() => setIsLoading(false));
     };
 
     return (
