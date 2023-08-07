@@ -412,12 +412,10 @@ const findCurrDeptTime = (trainDetail, trainNo, currStation) => {
 };
 
 export const getKRLData = createAsyncThunk("krl", async (daop) => {
-    console.log("masuk redux");
     const resp = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}kci/krl-d${daop}`
     );
     const trainData = resp.data;
-    console.log("original data: ", trainData);
     const modifiedTrainData = trainData.location.map((train) => {
         return {
             ...train,
@@ -431,8 +429,6 @@ export const getKRLData = createAsyncThunk("krl", async (daop) => {
             ),
         };
     });
-
-    console.log("modified data: ", modifiedTrainData);
 
     return modifiedTrainData;
 });

@@ -4,26 +4,30 @@ import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useGeolocated } from "react-geolocated";
 import axios from "axios";
+import _ from "lodash";
 import { ArrowUpDown } from "lucide-react";
 
-import { getKRLData, selectKRLData } from "@/store/slices/krlSlice";
 import Datatable from "@/components/Datatable";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import _ from "lodash";
+import {
+    getCurrentCity,
+    selectUserLocation,
+    setClosestLandmark,
+} from "@/store/slices/locationSlice";
+import { getStations, selectLandmarks } from "@/store/slices/landmarksSlice";
 
 export default function Home() {
-    const [stations, setStations] = useState([]);
-    const [closestStation, setClosestStation] = useState({});
-    const [currentCity, setCurrentCity] = useState({});
+    const [stationTimetable, setStationTimetable] = useState({});
     const [isLoading, setIsLoading] = useState(false);
 
     const dispatch = useDispatch();
-    const krlList = useSelector(selectKRLData);
+    const { currentCity, closestLandmark } = useSelector(selectUserLocation);
+    const { stations } = useSelector(selectLandmarks);
 
     const columns = [
         {
-            accessorKey: "noka",
+            accessorKey: "dest",
             header: ({ column }) => {
                 return (
                     <Button
@@ -33,27 +37,45 @@ export default function Home() {
                             column.toggleSorting(column.getIsSorted() === "asc")
                         }
                     >
-                        No. KA
+                        Tujuan
                         <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                 );
             },
         },
         {
-            accessorKey: "route_name",
-            header: "Relasi",
+            accessorKey: "noka",
+            header: "No. KA",
         },
-        {
-            accessorKey: "trainset",
-            header: "TS",
-        },
+        // {
+        //     accessorKey: "trains",
+        //     header: "TS",
+        //     cell: (props) => (
+        //         <div className="font-bold">
+        //             {props.getValue().map((train) => (
+        //                 <span key={train.train_no}>{train.train_no}</span>
+        //             ))}
+        //         </div>
+        //     ),
+        // },
         {
             accessorKey: "sf",
             header: "SF",
         },
         {
             accessorKey: "jadwal",
-            header: "Berangkat",
+            header: "ETA",
+        },
+        {
+            accessorKey: "posisi",
+            header: "Posisi",
+            cell: (props) => (
+                <div>{`${props.getValue().posisi} ${
+                    props.getValue().hasOwnProperty("peron")
+                        ? `— JALUR ${props.getValue().peron}`
+                        : ""
+                }`}</div>
+            ),
         },
     ];
 
@@ -65,18 +87,36 @@ export default function Home() {
             userDecisionTimeout: 5000,
         });
 
-    const getStations = async () => {
+    const getCurrentStationTimetable = async (currStation) => {
         await axios
-            .get(`${process.env.NEXT_PUBLIC_API_URL}kci/stations`)
-            .then((res) => setStations(res.data));
-    };
+            .post(`${process.env.NEXT_PUBLIC_API_URL}kci/station-timetable`, {
+                src: currStation,
+            })
+            .then((res) => {
+                const data = res.data?.data;
 
-    const getCurrentCity = async () => {
-        await axios
-            .get(
-                `${process.env.NEXT_PUBLIC_GEOAPI_URL}?lat=${coords.latitude}&lon=${coords.longitude}&format=json&accept-language=id-ID`
-            )
-            .then(({ data: { address } }) => setCurrentCity(address));
+                const flattenedData = _.flatMap(
+                    data,
+                    ({ dest_station_name, trains }) =>
+                        _.map(trains, (train) => ({
+                            dest: dest_station_name,
+                            noka: train.train_no,
+                            jadwal: train.time,
+                            sf: train.sf,
+                            posisi: {
+                                posisi: train.position.replace(
+                                    "BERANGKAT",
+                                    "BER"
+                                ),
+                                ...(train.time.includes("TIBA")
+                                    ? { peron: train.track }
+                                    : null),
+                            },
+                        }))
+                );
+
+                setStationTimetable(flattenedData);
+            });
     };
 
     const calculateDistance = (lat1, lon1, lat2, lon2) => {
@@ -120,13 +160,15 @@ export default function Home() {
     };
 
     useEffect(() => {
-        getStations();
-    }, []);
+        if (stations.length === 0) dispatch(getStations());
+    }, [dispatch]);
 
     useEffect(() => {
         if (stations.length > 0) {
             const currLat = coords?.latitude;
             const currLon = coords?.longitude;
+
+            console.log("ini masuk");
 
             if (coords) {
                 const closeStation = findClosestPoint(
@@ -134,35 +176,42 @@ export default function Home() {
                     currLon,
                     stations
                 );
-                getCurrentCity();
-                setClosestStation(closeStation);
-                setIsLoading(true);
+
+                if (Object.keys(currentCity).length === 0)
+                    dispatch(getCurrentCity(coords));
+
+                if (Object.keys(closestLandmark).length === 0)
+                    dispatch(setClosestLandmark(closeStation));
             }
         }
-    }, [stations, coords]);
+    }, [stations, coords, dispatch]);
 
     useEffect(() => {
-        if (Object.keys(currentCity).length > 0) {
-            dispatch(
-                getKRLData(currentCity.city.includes("Jakarta") ? 1 : 6)
-            ).then(() => setIsLoading(false));
-        }
-    }, [currentCity, dispatch]);
+        if (Object.keys(closestLandmark).length > 0) {
+            setIsLoading(true);
 
-    const currStationTimetable = useMemo(() => {
-        if (Object.keys(closestStation).length > 0)
-            return _.filter(
-                krlList,
-                (trains) =>
-                    trains.station ===
-                    `${closestStation.code} - ${closestStation.name}`
+            getCurrentStationTimetable(closestLandmark.code).then(() =>
+                setIsLoading(false)
             );
-        else return [];
-    }, [krlList, closestStation]);
+        }
+
+        const interval = setInterval(() => {
+            if (Object.keys(closestLandmark).length > 0) {
+                setIsLoading(true);
+
+                getCurrentStationTimetable(closestLandmark.code).then(() =>
+                    setIsLoading(false)
+                );
+            }
+        }, 60000);
+
+        return () => {
+            clearInterval(interval);
+        };
+    }, [closestLandmark]);
 
     return (
         <div className="flex flex-col px-6 py-2 h-[calc(100vh-48px)]">
-            {console.log(currentCity)}
             <div className="grid grid-cols-5 w-1/2">
                 <span className="text-white font-bold font-wayfinding tracking-wide">
                     Lokasimu
@@ -184,18 +233,18 @@ export default function Home() {
                 </span>
                 <div className="flex col-span-4 text-white font-bold font-wayfinding tracking-wide">
                     :{" "}
-                    {Object.keys(closestStation).length ? (
-                        `${closestStation.code} - ${closestStation.name}`
+                    {Object.keys(closestLandmark).length ? (
+                        `${closestLandmark.code} - ${closestLandmark.name}`
                     ) : (
                         <Skeleton className="ml-1 h-[90%] w-full bg-slate-500/50" />
                     )}
                 </div>
             </div>
-            <div className="grid grid-cols-2 gap-4 w-full mt-4">
-                <div className="flex flex-col gap-2 text-white font-bold font-wayfinding">
+            <div className="grid grid-cols-2 gap-4 w-full mt-2">
+                <div className="flex flex-col gap-1 text-white font-bold font-wayfinding">
                     Kereta berikutnya:
                     <Datatable
-                        data={currStationTimetable}
+                        data={stationTimetable}
                         columns={columns}
                         loading={isLoading}
                     />

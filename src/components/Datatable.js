@@ -40,7 +40,6 @@ const Datatable = ({ data, columns, loading }) => {
 
     return (
         <div>
-            {console.log(data)}
             <div className="bg-waybase border-[2px] border-white">
                 <Table>
                     <TableHeader>
@@ -124,28 +123,26 @@ const Datatable = ({ data, columns, loading }) => {
                 <span className="text-white font-wayfinding font-bold tracking-wide">
                     Total kereta: {data.length}
                 </span>
-                {data.length > 8 && (
-                    <div className="space-x-2">
-                        <Button
-                            variant="outline"
-                            className="font-wayfinding uppercase bg-wayout font-bold"
-                            size="sm"
-                            onClick={() => table.previousPage()}
-                            disabled={!table.getCanPreviousPage()}
-                        >
-                            Kembali
-                        </Button>
-                        <Button
-                            variant="outline"
-                            className="font-wayfinding uppercase bg-wayout font-bold"
-                            size="sm"
-                            onClick={() => table.nextPage()}
-                            disabled={!table.getCanNextPage()}
-                        >
-                            Berikutnya
-                        </Button>
-                    </div>
-                )}
+                <div className="space-x-2 text-black">
+                    <Button
+                        variant="outline"
+                        className="font-wayfinding uppercase bg-wayout font-bold"
+                        size="sm"
+                        onClick={() => table.previousPage()}
+                        disabled={!table.getCanPreviousPage()}
+                    >
+                        Kembali
+                    </Button>
+                    <Button
+                        variant="outline"
+                        className="font-wayfinding uppercase bg-wayout font-bold"
+                        size="sm"
+                        onClick={() => table.nextPage()}
+                        disabled={!table.getCanNextPage()}
+                    >
+                        Berikutnya
+                    </Button>
+                </div>
             </div>
         </div>
     );
