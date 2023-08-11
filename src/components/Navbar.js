@@ -15,8 +15,8 @@ import { ArrowDownUp } from "lucide-react";
 
 const Navbar = () => {
     return (
-        <div className="sticky top-0 left-0 right-0 bg-waybase min-h-[42px]">
-            <div className="px-6 flex items-center border-b-[1px] border-white">
+        <div className="sticky top-0 left-0 right-0 bg-waybase min-h-[42px] shadow-md-lg shadow-gray-950">
+            <div className="px-6 flex items-center border-b-[1px]">
                 <div className="flex justify-between gap-4 w-full items-center">
                     <Link
                         href="/"
@@ -38,7 +38,7 @@ const Navbar = () => {
                                     <ArrowDownUp className="ml-2 h-4 w-4" />
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent className="bg-waybase absolute right-0 drop-shadow-xl border-neutral-300 border-[2px] z-[1002]">
+                            <DropdownMenuContent className="bg-waybase absolute w-[135px] -right-12 drop-shadow-xl border-neutral-300 border-[2px] z-[1002]">
                                 <DropdownMenuLabel className="text-white font-wayfinding font-bold">
                                     Wilayah Operasi
                                 </DropdownMenuLabel>
