@@ -3,7 +3,7 @@ import axios from "axios";
 
 export const getStations = createAsyncThunk("landmarks/stations", async () => {
     const stations = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}kci/stations`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/kci/stations`
     );
 
     return stations.data;

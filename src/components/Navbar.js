@@ -15,8 +15,8 @@ import { ArrowDownUp } from "lucide-react";
 
 const Navbar = () => {
     return (
-        <div className="sticky top-0 left-0">
-            <div className="relative px-6 flex items-center min-h-[48px] border-b-[1px] border-white">
+        <div className="sticky top-0 left-0 right-0 bg-waybase min-h-[42px]">
+            <div className="px-6 flex items-center border-b-[1px] border-white">
                 <div className="flex justify-between gap-4 w-full items-center">
                     <Link
                         href="/"

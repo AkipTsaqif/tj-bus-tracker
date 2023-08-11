@@ -4,5 +4,5 @@ export const metadata = {
 };
 
 export default function TJLayout({ children }) {
-    return <div>{children}</div>;
+    return <div className="mb-[60px]">{children}</div>;
 }

@@ -97,7 +97,7 @@ const Transjakarta = () => {
         // prod: tj-bus-tracker.cyclic.app
         await axios
             .post(
-                "https://tj-bus-tracker.cyclic.app/transjakarta/operators",
+                `${process.env.NEXT_PUBLIC_API_URL}/api/transjakarta/operators`,
                 prepareData,
                 {
                     cancelToken: cancelToken.token,
@@ -260,7 +260,7 @@ const Transjakarta = () => {
             display="flex"
             flexDirection="column"
             width="100vw"
-            className="h-[calc(100vh-48px)]"
+            className="h-[calc(100vh-84px)]"
         >
             <Grid
                 container

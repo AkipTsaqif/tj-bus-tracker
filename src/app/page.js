@@ -89,9 +89,12 @@ export default function Home() {
 
     const getCurrentStationTimetable = async (currStation) => {
         await axios
-            .post(`${process.env.NEXT_PUBLIC_API_URL}kci/station-timetable`, {
-                src: currStation,
-            })
+            .post(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/kci/station-timetable`,
+                {
+                    src: currStation,
+                }
+            )
             .then((res) => {
                 const data = res.data?.data;
 
@@ -168,14 +171,13 @@ export default function Home() {
             const currLat = coords?.latitude;
             const currLon = coords?.longitude;
 
-            console.log("ini masuk");
-
             if (coords) {
                 const closeStation = findClosestPoint(
                     currLat,
                     currLon,
                     stations
                 );
+                console.log("ini masuk");
 
                 if (Object.keys(currentCity).length === 0)
                     dispatch(getCurrentCity(coords));
