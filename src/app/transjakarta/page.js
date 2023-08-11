@@ -260,7 +260,7 @@ const Transjakarta = () => {
             display="flex"
             flexDirection="column"
             width="100vw"
-            className="h-[calc(100vh-84px)]"
+            className="h-[calc(100vh-78px)]"
         >
             <Grid
                 container

@@ -8,9 +8,11 @@ import Footer from "./Footer";
 const ReduxLayout = ({ children }) => {
     return (
         <Provider store={store}>
-            <div className="min-h-screen">
+            <div className="h-screen">
                 <Navbar />
-                <div className="mb-[42px]">{children}</div>
+                <div className="h-[calc(100vh-78px)] overflow-y-auto">
+                    {children}
+                </div>
                 <Footer />
             </div>
         </Provider>

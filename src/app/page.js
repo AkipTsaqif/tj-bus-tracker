@@ -10,6 +10,7 @@ import { ArrowUpDown } from "lucide-react";
 import Datatable from "@/components/Datatable";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
     getCurrentCity,
     selectUserLocation,
@@ -213,7 +214,7 @@ export default function Home() {
     }, [closestLandmark]);
 
     return (
-        <div className="flex flex-col px-6 py-2 h-[calc(100vh-48px)]">
+        <div className="flex flex-col px-6 py-2 h-[calc(100vh-78px)]">
             <div className="grid grid-cols-5 w-1/2">
                 <span className="text-white font-bold font-wayfinding tracking-wide">
                     Lokasimu
@@ -253,7 +254,31 @@ export default function Home() {
                 </div>
                 <div className="text-white font-bold font-wayfinding">
                     Bus terdekat:
-                    <div className="w-full m-auto">Dalam konstruksi</div>
+                    {/* <Tabs
+                        defaultValue="account"
+                        className="w-[400px] border-2 border-white"
+                    >
+                        <TabsList className="w-full m-auto bg-waybase">
+                            <TabsTrigger
+                                className="w-full m-auto font-bold"
+                                value="account"
+                            >
+                                Kereta
+                            </TabsTrigger>
+                            <TabsTrigger
+                                className="w-full m-auto font-bold"
+                                value="password"
+                            >
+                                Bus
+                            </TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="account">
+                            Make changes to your account here.
+                        </TabsContent>
+                        <TabsContent value="password">
+                            Change your password here.
+                        </TabsContent>
+                    </Tabs> */}
                 </div>
             </div>
         </div>

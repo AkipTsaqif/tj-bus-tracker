@@ -21,29 +21,21 @@ const Changelog = async () => {
     };
 
     return (
-        <div className="flex flex-col px-6 py-4 text-white font-wayfinding">
+        <div className="flex flex-col px-6 py-2 text-white font-wayfinding">
             <span className="text-xl font-bold">Changelog Aplikasi</span>
-            <div className="flex flex-col gap-1 mt-2">
+            <div className="flex flex-col gap-1">
                 {Array.isArray(commits) &&
                     commits.map((commit) => {
-                        if (
-                            new Date(
-                                commit.commit.committer.date
-                            ).toLocaleDateString("id-ID", dateOptions) !==
-                            multipleCommits
-                        ) {
-                            multipleCommits = new Date(
-                                commit.commit.committer.date
-                            ).toLocaleDateString("id-ID", dateOptions);
+                        const commitDate = new Date(
+                            commit.commit.committer.date
+                        ).toLocaleDateString("id-ID", dateOptions);
+
+                        if (commitDate !== multipleCommits) {
+                            multipleCommits = commitDate;
                             return (
-                                <div key={commit.sha}>
+                                <div key={commit.sha} className="mt-2">
                                     <span className="font-bold underline underline-offset-4">
-                                        {new Date(
-                                            commit.commit.committer.date
-                                        ).toLocaleDateString(
-                                            "id-ID",
-                                            dateOptions
-                                        )}
+                                        {commitDate}
                                     </span>
                                     <ul className="ml-2">
                                         <li className="flex items-center gap-2">
@@ -56,7 +48,7 @@ const Changelog = async () => {
                         } else {
                             return (
                                 <div key={commit.sha}>
-                                    <ul className="ml-2">
+                                    <ul className="ml-2 -mt-1">
                                         <li className="flex items-center gap-2">
                                             <CheckSquare className="w-4 h-4" />{" "}
                                             {commit.commit.message}
