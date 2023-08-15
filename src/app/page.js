@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useGeolocated } from "react-geolocated";
 import axios from "axios";
 import _ from "lodash";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, BusFront, TrainFront } from "lucide-react";
 
 import Datatable from "@/components/Datatable";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,8 @@ import {
     setClosestLandmark,
 } from "@/store/slices/locationSlice";
 import { getStations, selectLandmarks } from "@/store/slices/landmarksSlice";
+import MenuTabs from "@/components/MenuTabs/MenuTabs";
+import MenuContent from "@/components/MenuTabs/MenuContent";
 
 export default function Home() {
     const [stationTimetable, setStationTimetable] = useState({});
@@ -25,6 +27,24 @@ export default function Home() {
     const dispatch = useDispatch();
     const { currentCity, closestLandmark } = useSelector(selectUserLocation);
     const { stations } = useSelector(selectLandmarks);
+
+    const menus = [
+        {
+            id: "kci",
+            name: "KRL",
+            icon: <TrainFront />,
+        },
+        {
+            id: "kai",
+            name: "Kereta Jarak Jauh",
+            icon: <TrainFront />,
+        },
+        {
+            id: "tj",
+            name: "Transjakarta",
+            icon: <BusFront />,
+        },
+    ];
 
     const columns = [
         {
@@ -243,15 +263,21 @@ export default function Home() {
                     )}
                 </div>
             </div>
-            <div className="grid grid-cols-2 gap-4 w-full mt-2">
-                <div className="flex flex-col gap-1 text-white font-bold font-wayfinding">
-                    Kereta berikutnya:
-                    <Datatable
-                        data={stationTimetable}
-                        columns={columns}
-                        loading={isLoading}
-                    />
-                </div>
+            <MenuTabs menus={menus}>
+                <MenuContent content="kci">
+                    <div className="flex flex-col gap-1 text-white font-bold font-wayfinding">
+                        Kereta berikutnya:
+                        <Datatable
+                            data={stationTimetable}
+                            columns={columns}
+                            loading={isLoading}
+                        />
+                    </div>
+                </MenuContent>
+                <MenuContent content="kai">Dalam pengembangan</MenuContent>
+                <MenuContent content="tj">Dalam pengembangan</MenuContent>
+            </MenuTabs>
+            {/* <div className="grid grid-cols-2 gap-4 w-full mt-2">
                 <div className="text-white font-bold font-wayfinding">
                     Bus terdekat:
                     <Tabs
@@ -280,7 +306,7 @@ export default function Home() {
                         </TabsContent>
                     </Tabs>
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 }
