@@ -254,7 +254,7 @@ export default function Home() {
                 </div>
                 <div className="text-white font-bold font-wayfinding">
                     Bus terdekat:
-                    {/* <Tabs
+                    <Tabs
                         defaultValue="account"
                         className="w-[400px] border-2 border-white"
                     >
@@ -278,7 +278,7 @@ export default function Home() {
                         <TabsContent value="password">
                             Change your password here.
                         </TabsContent>
-                    </Tabs> */}
+                    </Tabs>
                 </div>
             </div>
         </div>

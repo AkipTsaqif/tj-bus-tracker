@@ -36,7 +36,7 @@ const Changelog = async () => {
     return (
         <div className="flex flex-col px-6 py-2 text-white font-wayfinding">
             <span className="text-xl font-bold">Daftar Perubahan Aplikasi</span>
-            <div className="columns-2">
+            <div className="gap-8 columns-2">
                 {Array.isArray(commits) &&
                     commits.map((commit) => (
                         <div
