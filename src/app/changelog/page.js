@@ -52,7 +52,9 @@ const Changelog = async () => {
                                         key={msg}
                                         className="flex items-center gap-2 mt-1"
                                     >
-                                        <CheckSquare className="w-4 h-4" />
+                                        <div className="w-4 h-4 flex-shrink-0">
+                                            <CheckSquare className="w-full h-full" />
+                                        </div>
                                         <p className="leading-[18px]">{msg}</p>
                                     </li>
                                 ))}

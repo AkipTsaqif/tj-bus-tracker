@@ -10,23 +10,27 @@ import { ArrowUpDown, BusFront, TrainFront } from "lucide-react";
 import Datatable from "@/components/Datatable";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import Clock from "react-live-clock";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import MenuTabs from "@/components/MenuTabs/MenuTabs";
+import MenuContent from "@/components/MenuTabs/MenuContent";
 import {
     getCurrentCity,
     selectUserLocation,
     setClosestLandmark,
 } from "@/store/slices/locationSlice";
 import { getStations, selectLandmarks } from "@/store/slices/landmarksSlice";
-import MenuTabs from "@/components/MenuTabs/MenuTabs";
-import MenuContent from "@/components/MenuTabs/MenuContent";
+import { getKRLData, selectKRLData } from "@/store/slices/krlSlice";
 
 export default function Home() {
     const [stationTimetable, setStationTimetable] = useState({});
+    const [completeTimetable, setCompleteTimetable] = useState({});
     const [isLoading, setIsLoading] = useState(false);
 
     const dispatch = useDispatch();
     const { currentCity, closestLandmark } = useSelector(selectUserLocation);
     const { stations } = useSelector(selectLandmarks);
+    const krlList = useSelector(selectKRLData);
 
     const menus = [
         {
@@ -67,6 +71,10 @@ export default function Home() {
         {
             accessorKey: "noka",
             header: "No. KA",
+        },
+        {
+            accessorKey: "ts",
+            header: "TS",
         },
         // {
         //     accessorKey: "trains",
@@ -188,6 +196,18 @@ export default function Home() {
     }, [dispatch]);
 
     useEffect(() => {
+        dispatch(getKRLData("d1"));
+
+        const interval = setInterval(() => {
+            dispatch(getKRLData("d1"));
+        }, 300000);
+
+        return () => {
+            clearInterval(interval);
+        };
+    }, [dispatch]);
+
+    useEffect(() => {
         if (stations.length > 0) {
             const currLat = coords?.latitude;
             const currLon = coords?.longitude;
@@ -213,18 +233,14 @@ export default function Home() {
         if (Object.keys(closestLandmark).length > 0) {
             setIsLoading(true);
 
-            getCurrentStationTimetable(closestLandmark.code).then(() =>
-                setIsLoading(false)
-            );
+            getCurrentStationTimetable(closestLandmark.code);
         }
 
         const interval = setInterval(() => {
             if (Object.keys(closestLandmark).length > 0) {
                 setIsLoading(true);
 
-                getCurrentStationTimetable(closestLandmark.code).then(() =>
-                    setIsLoading(false)
-                );
+                getCurrentStationTimetable(closestLandmark.code);
             }
         }, 60000);
 
@@ -233,42 +249,70 @@ export default function Home() {
         };
     }, [closestLandmark]);
 
+    useEffect(() => {
+        if (Object.keys(stationTimetable).length > 0 && krlList.length > 0) {
+            setIsLoading(true);
+            const trainset = _.keyBy(krlList, "noka");
+            const mergedTrainset = stationTimetable.map((train) => {
+                const noka = train.noka;
+                const ts = trainset[noka]?.trainset || "Tidak diketahui";
+
+                return _.merge({}, train, { ts });
+            });
+
+            setCompleteTimetable(mergedTrainset);
+            setIsLoading(false);
+        }
+    }, [stationTimetable, krlList]);
+
     return (
         <div className="flex flex-col px-6 py-2 h-[calc(100vh-78px)]">
-            <div className="grid grid-cols-5 w-1/2">
-                <span className="text-white font-bold font-wayfinding tracking-wide">
-                    Lokasimu
-                </span>
-                <div className="flex col-span-4 text-white font-bold font-wayfinding tracking-wide">
-                    :{" "}
-                    {Object.keys(currentCity).length ? (
-                        `${
-                            currentCity.neighbourhood
-                                ? currentCity.neighbourhood
-                                : currentCity.village
-                        }, ${currentCity.city_district}, ${currentCity.city}`
-                    ) : (
-                        <Skeleton className="ml-1 h-[90%] w-full bg-slate-500/50" />
-                    )}
+            <div className="flex justify-between items-center">
+                <div className="grid grid-cols-5 w-1/2">
+                    <span className="text-white font-bold font-wayfinding tracking-wide">
+                        Lokasimu
+                    </span>
+                    <div className="flex col-span-4 text-white font-bold font-wayfinding tracking-wide">
+                        :{" "}
+                        {Object.keys(currentCity).length ? (
+                            `${
+                                currentCity.neighbourhood
+                                    ? currentCity.neighbourhood
+                                    : currentCity.village
+                            }, ${currentCity.city_district}, ${
+                                currentCity.city
+                            }`
+                        ) : (
+                            <Skeleton className="ml-1 h-[90%] w-full bg-slate-500/50" />
+                        )}
+                    </div>
+                    <span className="text-white font-bold font-wayfinding tracking-wide">
+                        Stasiun terdekat
+                    </span>
+                    <div className="flex col-span-4 text-white font-bold font-wayfinding tracking-wide">
+                        :{" "}
+                        {Object.keys(closestLandmark).length ? (
+                            `${closestLandmark.code} - ${closestLandmark.name}`
+                        ) : (
+                            <Skeleton className="ml-1 h-[90%] w-full bg-slate-500/50" />
+                        )}
+                    </div>
                 </div>
-                <span className="text-white font-bold font-wayfinding tracking-wide">
-                    Stasiun terdekat
-                </span>
-                <div className="flex col-span-4 text-white font-bold font-wayfinding tracking-wide">
-                    :{" "}
-                    {Object.keys(closestLandmark).length ? (
-                        `${closestLandmark.code} - ${closestLandmark.name}`
-                    ) : (
-                        <Skeleton className="ml-1 h-[90%] w-full bg-slate-500/50" />
-                    )}
+                <div>
+                    <Clock
+                        className="text-white font-wayfinding font-bold text-center text-[26px]"
+                        format={"HH:mm:ss"}
+                        ticking={true}
+                        timezone={"Asia/Jakarta"}
+                    />
                 </div>
             </div>
             <MenuTabs menus={menus}>
                 <MenuContent content="kci">
-                    <div className="flex flex-col gap-1 text-white font-bold font-wayfinding">
+                    <div className="flex flex-col gap-2 text-white font-bold font-wayfinding">
                         Kereta berikutnya:
                         <Datatable
-                            data={stationTimetable}
+                            data={completeTimetable}
                             columns={columns}
                             loading={isLoading}
                         />

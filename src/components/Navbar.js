@@ -6,7 +6,11 @@ import {
     DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
+    DropdownMenuPortal,
     DropdownMenuSeparator,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import Link from "next/link";
@@ -44,14 +48,32 @@ const Navbar = () => {
                                 </DropdownMenuLabel>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuGroup>
-                                    <DropdownMenuItem className="focus:bg-waybus">
-                                        <Link
-                                            href="/kci/1"
-                                            className="text-white font-wayfinding w-full h-full"
-                                        >
-                                            Daop I
-                                        </Link>
-                                    </DropdownMenuItem>
+                                    <DropdownMenuSub>
+                                        <DropdownMenuSubTrigger className="text-white font-wayfinding focus:bg-waybase dark:focus:bg-waybase data-[state=open]:bg-wayout data-[state=open]:text-black data-[state=open]:font-bold">
+                                            <span>Daop I</span>
+                                        </DropdownMenuSubTrigger>
+                                        <DropdownMenuPortal>
+                                            <DropdownMenuSubContent className="bg-waybase mr-1.5 border-2">
+                                                <DropdownMenuItem className="hover:opacity-80 focus:bg-waybase">
+                                                    <Link
+                                                        href="/kci/d1/all"
+                                                        className="text-white font-wayfinding w-full h-full"
+                                                    >
+                                                        Seluruh Daop I
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem className="focus:bg-waybus">
+                                                    <Link
+                                                        href="/kci/d1/all"
+                                                        className="text-white font-wayfinding w-full h-full"
+                                                    >
+                                                        Per Stasiun (Coming
+                                                        Soon)
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                            </DropdownMenuSubContent>
+                                        </DropdownMenuPortal>
+                                    </DropdownMenuSub>
                                     <DropdownMenuItem className="focus:bg-waybus">
                                         <Link
                                             href="/kci/6"

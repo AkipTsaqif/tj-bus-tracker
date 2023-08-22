@@ -119,7 +119,7 @@ const Datatable = ({ data, columns, loading }) => {
                     </TableBody>
                 </Table>
             </div>
-            <div className="flex items-center justify-between space-x-2 py-4 ">
+            <div className="flex items-center justify-between space-x-2 py-2">
                 <span className="text-white font-wayfinding font-bold tracking-wide">
                     Total kereta: {data.length}
                 </span>
