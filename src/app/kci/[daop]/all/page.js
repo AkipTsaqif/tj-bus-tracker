@@ -8,50 +8,14 @@ import { Button } from "@/components/ui/button";
 import { useDispatch, useSelector } from "react-redux";
 import { getKRLData, selectKRLData } from "@/store/slices/krlSlice";
 import _ from "lodash";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-} from "@/components/ui/command";
-import { cn } from "@/lib/utils";
-
-const frameworks = [
-    {
-        value: "next.js",
-        label: "Next.js",
-    },
-    {
-        value: "sveltekit",
-        label: "SvelteKit",
-    },
-    {
-        value: "nuxt.js",
-        label: "Nuxt.js",
-    },
-    {
-        value: "remix",
-        label: "Remix",
-    },
-    {
-        value: "astro",
-        label: "Astro",
-    },
-];
+import { getStations, selectLandmarks } from "@/store/slices/landmarksSlice";
 
 const DaopTimetable = ({ params }) => {
     const [isLoading, setIsLoading] = useState(false);
-    const [open, setOpen] = useState(false);
-    const [value, setValue] = useState("");
 
     const dispatch = useDispatch();
     const krlList = useSelector(selectKRLData);
+    const { stations } = useSelector(selectLandmarks);
 
     const columns = [
         {
@@ -134,73 +98,22 @@ const DaopTimetable = ({ params }) => {
         dispatch(getKRLData(params.type)).then(() => setIsLoading(false));
     };
 
+    useEffect(() => {
+        if (stations.length === 0) {
+            dispatch(getStations());
+        }
+    }, [dispatch]);
+
     return (
         <div>
             {/* <div className="absolute left-6 top-12 text-white text-[10px] font-wayfinding">
                 v1.2.6
             </div> */}
             <div className="flex justify-between items-center mx-6 my-4">
-                {params.type === "all" ? (
-                    <h1 className="text-white text-[20px] font-wayfinding font-bold">
-                        KCI Daop I
-                    </h1>
-                ) : (
-                    <Popover
-                        open={open}
-                        onOpenChange={setOpen}
-                        className="bg-waybase"
-                    >
-                        <PopoverTrigger asChild>
-                            <Button
-                                variant="outline"
-                                role="combobox"
-                                aria-expanded={open}
-                                className="w-[200px] justify-between bg-waybase text-white font-wayfinding font-bold hover:bg-wayout hover:text-black"
-                            >
-                                {value
-                                    ? frameworks.find(
-                                          (framework) =>
-                                              framework.value === value
-                                      )?.label
-                                    : "Pilih stasiun..."}
-                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-[200px] p-0">
-                            <Command className="font-wayfinding font-bold">
-                                <CommandInput placeholder="Cari stasiun..." />
-                                <CommandEmpty>
-                                    Stasiun tidak ditemukan.
-                                </CommandEmpty>
-                                <CommandGroup>
-                                    {frameworks.map((framework) => (
-                                        <CommandItem
-                                            key={framework.value}
-                                            onSelect={(currentValue) => {
-                                                setValue(
-                                                    currentValue === value
-                                                        ? ""
-                                                        : currentValue
-                                                );
-                                                setOpen(false);
-                                            }}
-                                        >
-                                            <Check
-                                                className={cn(
-                                                    "mr-2 h-4 w-4",
-                                                    value === framework.value
-                                                        ? "opacity-100"
-                                                        : "opacity-0"
-                                                )}
-                                            />
-                                            {framework.label}
-                                        </CommandItem>
-                                    ))}
-                                </CommandGroup>
-                            </Command>
-                        </PopoverContent>
-                    </Popover>
-                )}
+                <h1 className="text-white text-[20px] font-wayfinding font-bold">
+                    KCI Daop I
+                </h1>
+
                 <Clock
                     className="text-white font-wayfinding font-bold text-center text-[28px]"
                     format={"HH:mm:ss"}

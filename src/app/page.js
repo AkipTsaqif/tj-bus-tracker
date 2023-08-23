@@ -21,6 +21,7 @@ import {
 } from "@/store/slices/locationSlice";
 import { getStations, selectLandmarks } from "@/store/slices/landmarksSlice";
 import { getKRLData, selectKRLData } from "@/store/slices/krlSlice";
+import MovingChevrons from "@/components/MovingChevrons";
 
 export default function Home() {
     const [stationTimetable, setStationTimetable] = useState({});
@@ -97,13 +98,44 @@ export default function Home() {
         },
         {
             accessorKey: "posisi",
-            header: "Posisi",
+            header: ({ column }) => {
+                return (
+                    <div className="w-full h-full flex items-center">
+                        <Button
+                            variant="ghost"
+                            className="w-1/2 m-auto tracking-wider text-white font-wayfinding font-bold hover:bg-waybase hover:text-white"
+                            onClick={() =>
+                                column.toggleSorting(
+                                    column.getIsSorted() === "asc"
+                                )
+                            }
+                        >
+                            Posisi
+                            <ArrowUpDown className="ml-2 h-4 w-4" />
+                        </Button>
+                    </div>
+                );
+            },
             cell: (props) => (
-                <div>{`${props.getValue().posisi} ${
-                    props.getValue().hasOwnProperty("peron")
-                        ? `— JALUR ${props.getValue().peron}`
-                        : ""
-                }`}</div>
+                <div>
+                    {props.getValue().hasOwnProperty("peron") ? (
+                        <div className="flex w-full h-full items-center">
+                            <div className="w-1/4 flex">
+                                <MovingChevrons length={5} />
+                            </div>
+                            <span className="font-bold w-3/4">{`DI JALUR ${
+                                props.getValue().peron
+                            }`}</span>
+                        </div>
+                    ) : (
+                        <div className="flex w-full h-full items-center">
+                            <div className="w-1/4 flex text-waybase">-</div>
+                            <span className="w-3/4">{`${
+                                props.getValue().posisi
+                            }`}</span>
+                        </div>
+                    )}
+                </div>
             ),
         },
     ];
@@ -211,14 +243,21 @@ export default function Home() {
         if (stations.length > 0) {
             const currLat = coords?.latitude;
             const currLon = coords?.longitude;
+            const flattenedStations = _.flatMap(stations, (categoryObj) => {
+                const category = categoryObj.category;
+                const stations = categoryObj.stations;
+
+                return _.map(stations, (station) => {
+                    return { ...station, category };
+                });
+            });
 
             if (coords) {
                 const closeStation = findClosestPoint(
                     currLat,
                     currLon,
-                    stations
+                    flattenedStations
                 );
-                console.log("ini masuk");
 
                 if (Object.keys(currentCity).length === 0)
                     dispatch(getCurrentCity(coords));

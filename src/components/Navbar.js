@@ -54,7 +54,7 @@ const Navbar = () => {
                                         </DropdownMenuSubTrigger>
                                         <DropdownMenuPortal>
                                             <DropdownMenuSubContent className="bg-waybase mr-1.5 border-2">
-                                                <DropdownMenuItem className="hover:opacity-80 focus:bg-waybase">
+                                                <DropdownMenuItem className="hover:opacity-75 focus:bg-waybase">
                                                     <Link
                                                         href="/kci/d1/all"
                                                         className="text-white font-wayfinding w-full h-full"
@@ -62,13 +62,12 @@ const Navbar = () => {
                                                         Seluruh Daop I
                                                     </Link>
                                                 </DropdownMenuItem>
-                                                <DropdownMenuItem className="focus:bg-waybus">
+                                                <DropdownMenuItem className="hover:opacity-75 focus:bg-waybase">
                                                     <Link
-                                                        href="/kci/d1/all"
+                                                        href="/kci/d1/stations"
                                                         className="text-white font-wayfinding w-full h-full"
                                                     >
-                                                        Per Stasiun (Coming
-                                                        Soon)
+                                                        Per Stasiun
                                                     </Link>
                                                 </DropdownMenuItem>
                                             </DropdownMenuSubContent>
