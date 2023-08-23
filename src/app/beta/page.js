@@ -10,10 +10,7 @@ const Experimental = () => {
     const [buttonTab, setButtonTab] = useState(0);
     return (
         <div className="font-wayfinding text-white font-bold mt-8">
-            <div className="flex gap-4 w-full">
-                <LineIcon />
-                EEEEEEEEEEEE
-            </div>
+            <div className="flex gap-4 w-full">EEEEEEEEEEEE</div>
         </div>
     );
 };
