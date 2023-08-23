@@ -22,6 +22,7 @@ import {
 import { getStations, selectLandmarks } from "@/store/slices/landmarksSlice";
 import { getKRLData, selectKRLData } from "@/store/slices/krlSlice";
 import MovingChevrons from "@/components/MovingChevrons";
+import LineIcon from "@/components/LineIcon";
 
 export default function Home() {
     const [stationTimetable, setStationTimetable] = useState({});
@@ -68,6 +69,15 @@ export default function Home() {
                     </Button>
                 );
             },
+            cell: (props) => (
+                <div className="font-bold flex items-center gap-2">
+                    <LineIcon
+                        line={props.getValue()}
+                        noka={props.row.original.noka}
+                    />
+                    {props.getValue()}
+                </div>
+            ),
         },
         {
             accessorKey: "noka",

@@ -95,7 +95,7 @@ const DaopTimetable = ({ params }) => {
 
     const fetchData = () => {
         setIsLoading(true);
-        dispatch(getKRLData(params.type)).then(() => setIsLoading(false));
+        dispatch(getKRLData(params.daop)).then(() => setIsLoading(false));
     };
 
     useEffect(() => {
@@ -122,7 +122,7 @@ const DaopTimetable = ({ params }) => {
                 />
                 <Button
                     className="uppercase tracking-wide bg-wayout hover:bg-wayout font-wayfinding text-black font-bold border-white border-[1px]"
-                    onClick={() => fetchData()}
+                    onClick={fetchData}
                     disabled={isLoading}
                 >
                     Refresh Data

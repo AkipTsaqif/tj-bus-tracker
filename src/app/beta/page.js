@@ -4,14 +4,14 @@ import { useState } from "react";
 import { CSSTransition } from "react-transition-group";
 import { Button } from "@/components/ui/button";
 import { BusFront, TrainFront } from "lucide-react";
-import MovingChevrons from "@/components/MovingChevrons";
+import LineIcon from "@/components/LineIcon";
 
 const Experimental = () => {
     const [buttonTab, setButtonTab] = useState(0);
     return (
         <div className="font-wayfinding text-white font-bold mt-8">
             <div className="flex gap-4 w-full">
-                <MovingChevrons length={5} />
+                <LineIcon />
                 EEEEEEEEEEEE
             </div>
         </div>

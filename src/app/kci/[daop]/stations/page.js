@@ -25,6 +25,7 @@ import { getStations, selectLandmarks } from "@/store/slices/landmarksSlice";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import axios from "axios";
 import MovingChevrons from "@/components/MovingChevrons";
+import LineIcon from "@/components/LineIcon";
 
 const DaopStationTimetable = ({ params }) => {
     const [isLoading, setIsLoading] = useState(false);
@@ -55,7 +56,13 @@ const DaopStationTimetable = ({ params }) => {
                 );
             },
             cell: (props) => (
-                <div className="font-bold">{props.getValue()}</div>
+                <div className="font-bold flex items-center gap-2">
+                    <LineIcon
+                        line={props.getValue()}
+                        noka={props.row.original.noka}
+                    />
+                    {props.getValue()}
+                </div>
             ),
         },
         {
@@ -118,7 +125,7 @@ const DaopStationTimetable = ({ params }) => {
                         </div>
                     ) : (
                         <div className="flex w-full h-full items-center">
-                            <div className="w-1/4 flex text-waybase">-</div>
+                            <div className="w-1/4 flex text-waybase"></div>
                             <span className="w-3/4">{`${
                                 props.getValue().posisi
                             }`}</span>
