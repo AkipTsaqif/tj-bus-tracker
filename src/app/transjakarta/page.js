@@ -328,6 +328,7 @@ const Transjakarta = () => {
             <Box
                 display="flex"
                 position="relative"
+                mt="24px"
                 flex={1}
                 sx={{
                     "& .MuiInputBase-root.MuiOutlinedInput-root": {

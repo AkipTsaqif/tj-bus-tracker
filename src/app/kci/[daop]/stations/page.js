@@ -166,7 +166,6 @@ const DaopStationTimetable = ({ params }) => {
                 }
             )
             .then((res) => {
-                console.log("di sini msh jalan");
                 const data = res.data?.data;
 
                 const flattenedData = _.flatMap(
@@ -214,7 +213,6 @@ const DaopStationTimetable = ({ params }) => {
     useEffect(() => {
         if (selectedStation) {
             setCompleteTimetable([]);
-            console.log("ini jalan trs");
             fetchData(selectedStation.code);
 
             const interval = setInterval(() => {
@@ -341,6 +339,7 @@ const DaopStationTimetable = ({ params }) => {
                     columns={columns}
                     data={completeTimetable}
                     loading={isLoading}
+                    clickableRow={true}
                 />
             </div>
         </div>

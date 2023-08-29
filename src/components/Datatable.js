@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import {
     flexRender,
     getCoreRowModel,
@@ -17,9 +18,12 @@ import {
     TableRow,
 } from "./ui/table";
 import { Button } from "./ui/button";
+import Link from "next/link";
+import { getKRLDataByTrainNo } from "@/store/slices/krlSlice";
 
-const Datatable = ({ data, columns, loading }) => {
+const Datatable = ({ data, columns, loading, clickableRow = false }) => {
     const [sorting, setSorting] = useState([]);
+    const dispatch = useDispatch();
 
     const table = useReactTable({
         data,
@@ -72,16 +76,38 @@ const Datatable = ({ data, columns, loading }) => {
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}
-                                    className="hover:opacity-75"
+                                    className={`hover:opacity-80 ${
+                                        clickableRow ? "cursor-pointer" : ""
+                                    }`}
+                                    // onClick={
+                                    //     clickableRow
+                                    //         ? () =>
+                                    //               router.push(
+                                    //                   `/krl/d1/timetable/${row.original.noka}`
+                                    //               )
+                                    //         : undefined
+                                    // }
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell
                                             key={cell.id}
                                             className="text-white font-wayfinding tracking-wide"
                                         >
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext()
+                                            {clickableRow ? (
+                                                <Link
+                                                    href={`/kci/d1/timetable/${row.original.noka}`}
+                                                >
+                                                    {flexRender(
+                                                        cell.column.columnDef
+                                                            .cell,
+                                                        cell.getContext()
+                                                    )}
+                                                </Link>
+                                            ) : (
+                                                flexRender(
+                                                    cell.column.columnDef.cell,
+                                                    cell.getContext()
+                                                )
                                             )}
                                         </TableCell>
                                     ))}

@@ -6,6 +6,9 @@ import Rangkasbitung from "../../public/line-icons/Rangkasbitung_Icon.svg";
 import Tangerang from "../../public/line-icons/Tangerang_Icon.svg";
 
 const LineIcon = ({ line, noka }) => {
+    const width = 21.5;
+    const height = 21.5;
+
     if (
         line.toLowerCase() === "tanjungpriuk" ||
         (line.toLowerCase() === "jakartakota" && Math.floor(noka / 1000) === 2)
@@ -15,8 +18,8 @@ const LineIcon = ({ line, noka }) => {
                 className="border-2 border-white rounded-full"
                 src={TanjungPriok}
                 alt="Lin Tanjungpriuk"
-                width={24}
-                height={24}
+                width={width}
+                height={height}
             />
         );
     }
@@ -27,8 +30,8 @@ const LineIcon = ({ line, noka }) => {
                 className="border-2 border-white rounded-full"
                 src={Tangerang}
                 alt="Lin Tangerang"
-                width={24}
-                height={24}
+                width={width}
+                height={height}
             />
         );
     }
@@ -45,8 +48,8 @@ const LineIcon = ({ line, noka }) => {
                 className="border-2 border-white rounded-full"
                 src={Cikarang}
                 alt="Lin Cikarang"
-                width={24}
-                height={24}
+                width={width}
+                height={height}
             />
         );
     }
@@ -63,8 +66,8 @@ const LineIcon = ({ line, noka }) => {
                 className="border-2 border-white rounded-full"
                 src={Rangkasbitung}
                 alt="Lin Rangkasbitung"
-                width={24}
-                height={24}
+                width={width}
+                height={height}
             />
         );
     }
@@ -80,8 +83,8 @@ const LineIcon = ({ line, noka }) => {
                 className="border-2 border-white rounded-full"
                 src={Bogor}
                 alt="Lin Bogor"
-                width={24}
-                height={24}
+                width={width}
+                height={height}
             />
         );
     }

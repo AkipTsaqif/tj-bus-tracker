@@ -1,11 +1,17 @@
+"use client";
+
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import { useEffect, useState } from "react";
+import ReactDOMServer from "react-dom/server";
+import { useDispatch, useSelector } from "react-redux";
 import { Box } from "@mui/material";
+import { getStations, selectLandmarks } from "@/store/slices/landmarksSlice";
 import useDidMountEffect from "@/hooks/useDidMountEffect";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 import "leaflet-routing-machine";
+import { TramFront } from "lucide-react";
 
 const newIcon = new L.Icon({
     iconUrl: "/marker-100.png",
@@ -13,6 +19,18 @@ const newIcon = new L.Icon({
     iconSize: [48, 48],
     iconAnchor: [24, 45],
     popupAnchor: [0, -36],
+});
+
+const stationIcon = new L.divIcon({
+    className: "station-icon",
+    html: ReactDOMServer.renderToString(
+        <TramFront
+            color="#0C1B2A"
+            fill="#F9D437"
+            strokeWidth={3}
+            className="w-3.5 h-3.5"
+        />
+    ),
 });
 
 const Centering = ({ lat, lng }) => {
@@ -41,7 +59,7 @@ const Routing = () => {
         const routingControl = L.Routing.control({
             waypoints: [
                 L.latLng(routeStart),
-                L.latLng([-6.19245976162803, 106.90501986014483]),
+                L.latLng([-6.0, 104.0]),
                 L.latLng(routeEnd),
             ],
             routeWhileDragging: true,
@@ -67,18 +85,52 @@ const Routing = () => {
 
 const Map = ({ data, position }) => {
     const [pos, setPos] = useState([-6.225911, 106.832819]);
+    const [stationLocations, setStationLocations] = useState([]);
+
+    const dispatch = useDispatch();
+    const { stations } = useSelector(selectLandmarks);
 
     useEffect(() => {
         if (position) setPos(position);
     }, [position]);
 
+    useEffect(() => {
+        if (stations.length === 0) {
+            dispatch(getStations());
+        }
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (stations.length > 0) {
+            const flattenedStation = _.flatMap(stations, (categoryObj) => {
+                const category = categoryObj.category;
+                const stations = categoryObj.stations;
+
+                return _.map(stations, (station) => {
+                    return { ...station, category };
+                });
+            });
+
+            setStationLocations(flattenedStation);
+        }
+        console.log(
+            _.flatMap(stations, (categoryObj) => {
+                const category = categoryObj.category;
+                const stations = categoryObj.stations;
+
+                return _.map(stations, (station) => {
+                    return { ...station, category };
+                });
+            })
+        );
+    }, [stations]);
+
     return (
         // <Box display='flex' flexDirection='column' justifyContent='center'>
         <Box
             sx={{
-                // height: "100vh",
+                height: "100%",
                 width: "100%",
-                mt: "24px",
                 border: "1px solid gray",
                 // backgroundColor: 'rgb(125, 193, 220)',
                 // display: 'flex',
@@ -105,6 +157,17 @@ const Map = ({ data, position }) => {
                         icon={newIcon}
                     >
                         <Popup>{val.name}</Popup>
+                    </Marker>
+                ))}
+                {stationLocations?.map((val, i) => (
+                    <Marker
+                        key={i}
+                        position={[parseFloat(val.lat), parseFloat(val.lon)]}
+                        icon={stationIcon}
+                    >
+                        <Popup>
+                            {val.code} - {val.name}
+                        </Popup>
                     </Marker>
                 ))}
             </MapContainer>

@@ -411,7 +411,7 @@ const findCurrDeptTime = (trainDetail, trainNo, currStation) => {
     return time;
 };
 
-export const getKRLData = createAsyncThunk("krl", async (daop) => {
+export const getKRLData = createAsyncThunk("krl/all", async (daop) => {
     console.log("masuk redux");
     const resp = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}/api/kci/krl-${daop}`
@@ -434,15 +434,31 @@ export const getKRLData = createAsyncThunk("krl", async (daop) => {
     return modifiedTrainData;
 });
 
+export const getKRLDataByTrainNo = createAsyncThunk(
+    "krl/byTrainNo",
+    (trainData) => {
+        return trainData;
+    }
+);
+
 const krlSlice = createSlice({
     name: "krl",
-    initialState: [],
+    initialState: {
+        allKRL: [],
+        krlByTrainNo: {},
+    },
     reducers: {},
     extraReducers: {
-        [getKRLData.fulfilled]: (state, action) => action.payload,
+        [getKRLData.fulfilled]: (state, action) => {
+            state.allKRL = action.payload;
+        },
+        [getKRLDataByTrainNo.fulfilled]: (state, action) => {
+            state.krlByTrainNo = action.payload;
+        },
     },
 });
 
-export const selectKRLData = ({ krlSlice }) => krlSlice;
+export const selectKRLData = ({ krlSlice }) => krlSlice.allKRL;
+export const selectKRLDataByTrainNo = ({ krlSlice }) => krlSlice.krlByTrainNo;
 
 export default krlSlice.reducer;
