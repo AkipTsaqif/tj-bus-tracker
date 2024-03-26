@@ -1,6 +1,13 @@
 "use client";
 
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import {
+    MapContainer,
+    TileLayer,
+    Marker,
+    Polyline,
+    Popup,
+    useMap,
+} from "react-leaflet";
 import { useEffect, useState } from "react";
 import ReactDOMServer from "react-dom/server";
 import { useDispatch, useSelector } from "react-redux";
@@ -35,10 +42,11 @@ const stationIcon = new L.divIcon({
 
 const Centering = ({ lat, lng }) => {
     const map = useMap();
+    map.setView([lat, lng], 12);
 
-    useDidMountEffect(() => {
-        map.setView([lat, lng], 16);
-    }, [lat, lng]);
+    // useDidMountEffect(() => {
+    //     map.setView([lat, lng], 16);
+    // }, [lat, lng]);
 
     return null;
 };
@@ -83,7 +91,12 @@ const Routing = () => {
     return null;
 };
 
-const Map = ({ data, position }) => {
+const Map = ({
+    data,
+    position,
+    path = [[]],
+    midPoint = [-6.225911, 106.832819],
+}) => {
     const [pos, setPos] = useState([-6.225911, 106.832819]);
     const [stationLocations, setStationLocations] = useState([]);
 
@@ -100,6 +113,8 @@ const Map = ({ data, position }) => {
         }
     }, [dispatch]);
 
+    useEffect(() => {});
+
     useEffect(() => {
         if (stations.length > 0) {
             const flattenedStation = _.flatMap(stations, (categoryObj) => {
@@ -113,16 +128,6 @@ const Map = ({ data, position }) => {
 
             setStationLocations(flattenedStation);
         }
-        console.log(
-            _.flatMap(stations, (categoryObj) => {
-                const category = categoryObj.category;
-                const stations = categoryObj.stations;
-
-                return _.map(stations, (station) => {
-                    return { ...station, category };
-                });
-            })
-        );
     }, [stations]);
 
     return (
@@ -141,7 +146,7 @@ const Map = ({ data, position }) => {
             }}
         >
             <MapContainer center={pos} zoom={12} scrollWheelZoom={true}>
-                <Centering lat={pos[0]} lng={pos[1]} />
+                <Centering lat={midPoint[0]} lng={midPoint[1]} />
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -159,6 +164,7 @@ const Map = ({ data, position }) => {
                         <Popup>{val.name}</Popup>
                     </Marker>
                 ))}
+                <Polyline pathOptions={{ color: "blue" }} positions={path} />
                 {stationLocations?.map((val, i) => (
                     <Marker
                         key={i}

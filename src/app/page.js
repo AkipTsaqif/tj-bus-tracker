@@ -83,10 +83,10 @@ export default function Home() {
             accessorKey: "noka",
             header: "No. KA",
         },
-        {
-            accessorKey: "ts",
-            header: "TS",
-        },
+        // {
+        //     accessorKey: "ts",
+        //     header: "TS",
+        // },
         // {
         //     accessorKey: "trains",
         //     header: "TS",
@@ -299,12 +299,18 @@ export default function Home() {
     }, [closestLandmark]);
 
     useEffect(() => {
-        if (Object.keys(stationTimetable).length > 0 && krlList.length > 0) {
+        if (
+            Object.keys(stationTimetable).length > 0
+            // && krlList.length > 0
+        ) {
             setIsLoading(true);
-            const trainset = _.keyBy(krlList, "noka");
+            // const trainset = _.keyBy(krlList, "noka");
+            const trainset = null;
             const mergedTrainset = stationTimetable.map((train) => {
                 const noka = train.noka;
-                const ts = trainset[noka]?.trainset || "Tidak diketahui";
+                const ts =
+                    // trainset[noka]?.trainset ||
+                    "Tidak diketahui";
 
                 return _.merge({}, train, { ts });
             });

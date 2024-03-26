@@ -397,7 +397,7 @@ const Transjakarta = () => {
                         }}
                         sx={{
                             position: "absolute",
-                            top: 40, // adjust as needed
+                            top: 20, // adjust as needed
                             right: 20, // adjust as needed
                             zIndex: 1000,
                             backgroundColor: "#fff",
@@ -437,18 +437,6 @@ const Transjakarta = () => {
                 >
                     9
                 </Typography> */}
-                <Typography
-                    sx={{
-                        position: "absolute",
-                        top: 10,
-                        left: 10,
-                        fontSize: "8px",
-                        fontWeight: "bold",
-                    }}
-                    className="text-white font-wayfinding tracking-wide"
-                >
-                    v1.2.6
-                </Typography>
                 <Typography
                     sx={{
                         position: "absolute",
