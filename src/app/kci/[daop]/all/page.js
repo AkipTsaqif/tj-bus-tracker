@@ -104,6 +104,10 @@ const DaopTimetable = ({ params }) => {
         }
     }, [dispatch]);
 
+    useEffect(() => {
+        fetchData();
+    }, []);
+
     return (
         <div>
             {/* <div className="absolute left-6 top-12 text-white text-[10px] font-wayfinding">

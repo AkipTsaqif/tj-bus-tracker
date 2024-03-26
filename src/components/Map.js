@@ -41,6 +41,7 @@ const stationIcon = new L.divIcon({
 });
 
 const Centering = ({ lat, lng }) => {
+    console.log(lat, lng);
     const map = useMap();
     map.setView([lat, lng], 12);
 
@@ -129,6 +130,10 @@ const Map = ({
             setStationLocations(flattenedStation);
         }
     }, [stations]);
+
+    useEffect(() => {
+        console.log(midPoint);
+    }, [midPoint]);
 
     return (
         // <Box display='flex' flexDirection='column' justifyContent='center'>
